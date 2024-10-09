@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 
 app.get('/api', (req, res) => {
-  res.json({ message: 'Hello from the backend!' });
+  res.json({ message: 'Hello,\nThis is LearnIt : Unified Learning and Engagement Platform' });
 });
 
 const PORT = process.env.PORT;
