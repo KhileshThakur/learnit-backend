@@ -4,19 +4,18 @@ const HttpError = require('./models/http-error')
 const mongoose = require('mongoose')
 require('dotenv').config()
 
+const app = express();
+
 const port = process.env.PORT || 5000;
 const uri = process.env.URI;
 
-const app = express();
 
 const genericRoutes = require('./routes/generic-routes')
 const adminsRoutes = require('./routes/admins-routes');
 // const instructorsRoutes = require('./routes/instructors-routes');
 // const learnersRoutes = require('./routes/learners-routes');
 
-
 app.use(bodyParser.json());
-
 
 app.use((req, res, next)=>{
     res.setHeader('Access-Control-Allow-Origin', '*');
