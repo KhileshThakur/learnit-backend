@@ -5,17 +5,23 @@ const mongoose = require('mongoose')
 require('dotenv').config()
 
 const app = express();
+app.use(express.json());
 
 const port = process.env.PORT || 5000;
+
 const uri = process.env.URI;
 
 
 const genericRoutes = require('./routes/generic-routes')
 const adminsRoutes = require('./routes/admins-routes');
 // const instructorsRoutes = require('./routes/instructors-routes');
-// const learnersRoutes = require('./routes/learners-routes');
+const learnersRoutes = require('./routes/learners-routes');
+
+
 
 app.use(bodyParser.json());
+
+
 
 app.use((req, res, next)=>{
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -29,7 +35,7 @@ app.use((req, res, next)=>{
 app.use('/api', genericRoutes)
 app.use('/api/admin', adminsRoutes);
 // app.use('/api/instructor', instructorsRoutes);
-// app.use('/api/learner', learnersRoutes)
+app.use('/api/learner', learnersRoutes)
 
 
 app.use((req, res, next)=>{
@@ -58,4 +64,3 @@ mongoose.connect(uri).then(()=>{
 }).catch(err=>{
     console.log(err);
 });
-
