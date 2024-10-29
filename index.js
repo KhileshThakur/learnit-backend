@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const instructorRoutes = require('./routes/instructors-routes');
 const learnerRoutes = require('./routes/learners-routes');
+const genericRoutes = require('./routes/generic-routes.js');
 require('dotenv').config();
 
 const app = express();
@@ -16,7 +17,26 @@ mongoose.connect(process.env.URI)
 
 
 app.use('/api/instructor', instructorRoutes);
-app.use('/api/learner', learnerRoutes)
+app.use('/api/learner', learnerRoutes);
+app.use('/api', genericRoutes);
+
+app.use((req, res, next)=>{
+    const error = new HttpError('Could not find this Route', 404);
+    throw error;
+})
+
+app.use((error, req, res, next)=>{
+    if(req.file){
+        fs.unlink(req.file.path, (err)=>{
+            console.log(err);
+        });
+    }
+    if(res.headerSent){
+        return next(error);
+    }
+    res.status(error.code || 500);
+    res.json({message: error.message || 'An Unknown error occured !'});
+})
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
