@@ -11,7 +11,8 @@ const getFeedbacks = async (req, res, next) => {
         feedbacks = await Feedback.find({});
     }
     catch(err){
-        const error = new new HttpError('Fetching feedbacks failed, please try again later.', 500);
+        const error = new HttpError('Fetching feedbacks failed, please try again later.', 500);
+        return next(error);
     }
 
     if (!feedbacks || feedbacks.length === 0) {
