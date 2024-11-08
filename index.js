@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const instructorRoutes = require('./routes/instructors-routes');
 const learnerRoutes = require('./routes/learners-routes');
-const genericRoutes = require('./routes/generic-routes.js');
+const meetingRoutes = require('./routes/meeting-routes');
+const genericRoutes = require('./routes/generic-routes');
 require('dotenv').config();
 
 const app = express();
@@ -18,6 +19,7 @@ mongoose.connect(process.env.URI)
 
 app.use('/api/instructor', instructorRoutes);
 app.use('/api/learner', learnerRoutes);
+app.use('/api/meeting', meetingRoutes);
 app.use('/api', genericRoutes);
 
 app.use((req, res, next)=>{

@@ -11,7 +11,7 @@ router.post('/send-otp', instructorAuthController.sendOtp);
 router.post('/verify-otp', instructorAuthController.verifyOtp);
 router.post('/register', upload.fields([{ name: 'gresult' }, { name: 'presult' }, { name: 'resume' }]), instructorAuthController.registerInstructor);
 router.post('/auth', instructorAuthController.authenticateInstructor);
-router.get('/all', instructorFunctionController.getAllInstructors);
+router.get('/all', instructorFunctionController.getAllInstructorsWithoutFiles);
 router.get('/:id', instructorFunctionController.getInstructorById);
 router.put('/:id', instructorFunctionController.updateInstructor);
 router.delete('/:id', instructorFunctionController.deleteInstructor);

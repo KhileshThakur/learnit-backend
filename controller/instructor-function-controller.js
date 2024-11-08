@@ -12,6 +12,16 @@ const getAllInstructors = async (req, res) => {
     }
 };
 
+const getAllInstructorsWithoutFiles = async (req, res) => {
+    try {
+        const instructors = await Instructor.find().select('-graduation.gresult -postgraduation.presult -resume');
+        res.json(instructors);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 const getInstructorById = async (req, res) => {
     try {
         const instructor = await Instructor.findById(req.params.id);
@@ -57,4 +67,4 @@ const deleteInstructor = async (req, res) => {
     }
 };
 
-module.exports = { getAllInstructors, getInstructorById, updateInstructor, deleteInstructor };
+module.exports = { getAllInstructors, getInstructorById, updateInstructor, deleteInstructor, getAllInstructorsWithoutFiles };
