@@ -5,6 +5,7 @@ const instructorRoutes = require('./routes/instructors-routes');
 const learnerRoutes = require('./routes/learners-routes');
 const meetingRoutes = require('./routes/meeting-routes');
 const genericRoutes = require('./routes/generic-routes');
+const learnAiRoutes = require('./routes/learnAiRoutes/learnai-routes')
 require('dotenv').config();
 
 const app = express();
@@ -21,6 +22,7 @@ app.use('/api/instructor', instructorRoutes);
 app.use('/api/learner', learnerRoutes);
 app.use('/api/meeting', meetingRoutes);
 app.use('/api', genericRoutes);
+app.use('/learnai', learnAiRoutes);
 
 app.use((req, res, next)=>{
     const error = new HttpError('Could not find this Route', 404);
