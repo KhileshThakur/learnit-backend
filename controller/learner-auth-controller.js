@@ -75,7 +75,11 @@ const authLearner = async (req, res) => {
         }
 
         const token = jwt.sign({ id: learner._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, id: learner._id });
+        res.json({ 
+            token, 
+            id: learner._id,
+            name: learner.name
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
