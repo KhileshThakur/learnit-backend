@@ -12,4 +12,12 @@ router.get('/:id', learnerFunctionController.getLearnerById);
 router.put('/:id', learnerFunctionController.updateLearner);
 router.delete('/:id', learnerFunctionController.deleteLearner);
 
+// TIME CAPSULE
+const capsuleLeaController = require("../controller/timeCapsuleController/timeCapsuleLeaController");
+
+
+router.get("/capsule/explore", capsuleLeaController.exploreCapsules);
+router.post("/capsule/request/:capsuleId", capsuleLeaController.sendJoinRequest);
+router.get("/capsule/my-capsule/:learnerId", capsuleLeaController.getAcceptedCapsules);
+
 module.exports = router;

@@ -17,4 +17,15 @@ router.put('/:id', instructorFunctionController.updateInstructor);
 router.delete('/:id', instructorFunctionController.deleteInstructor);
 
 
+
+//Time capsule routes 
+const capsuleInsController = require("../controller/timeCapsuleController/timeCapsuleInsController");
+
+
+router.post("/capsule/create", capsuleInsController.createCapsule);
+router.get("/capsules/:instructorId", capsuleInsController.getInstructorCapsules);
+router.get("/capsule/requests/:capsuleId", capsuleInsController.viewJoinRequests);
+router.post("/capsule/handle-request/:capsuleId/:learnerId", capsuleInsController.handleRequest);
+
+
 module.exports = router;
