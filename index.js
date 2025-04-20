@@ -18,6 +18,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const discussionRoutes = require('./routes/DiscussionForum/discussion-routes');
+app.use('/api/discussion', discussionRoutes);
+
+
 // Connect to MongoDB
 mongoose.connect(process.env.URI)
     .then(() => console.log('MongoDB connected'))
