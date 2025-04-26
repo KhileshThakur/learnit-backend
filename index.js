@@ -32,9 +32,9 @@ app.use('/api/instructor', instructorRoutes);
 app.use('/api/learner', learnerRoutes);
 app.use('/api/meeting', meetingRoutes);
 app.use('/api/courses', courseRoutes);
+app.use('/api/learnai', learnAiRoutes);
 app.use('/api/classes', classRoutes);
 app.use('/api', genericRoutes);
-app.use('/learnai', learnAiRoutes);
 
 app.use((req, res, next)=>{
     const error = new HttpError('Could not find this Route', 404);
