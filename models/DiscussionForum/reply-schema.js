@@ -1,8 +1,11 @@
-
-
 const mongoose = require("mongoose");
 
-const threadSchema = new mongoose.Schema({
+const replySchema = new mongoose.Schema({
+  thread: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Thread",
+    required: true,
+  },
   authorType: {
     type: String,
     enum: ["Learner", "Instructor"],
@@ -18,7 +21,7 @@ const threadSchema = new mongoose.Schema({
     required: true,
   },
   
-  question: {
+  content: {
     type: String,
     required: true,
   },
@@ -26,12 +29,6 @@ const threadSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  replies: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Reply",
-    },
-  ],
 });
 
-module.exports = mongoose.model("Thread", threadSchema);
+module.exports = mongoose.model("Reply", replySchema);
