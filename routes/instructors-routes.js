@@ -28,4 +28,4 @@ router.get("/capsule/requests/:capsuleId", capsuleInsController.viewJoinRequests
 router.post("/capsule/handle-request/:capsuleId/:learnerId", capsuleInsController.handleRequest);
 
 
-module.exports = router;
+module.exports = router; 
