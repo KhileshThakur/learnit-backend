@@ -40,8 +40,21 @@ const createCourse = async (req, res, next) => {
 // Get all courses 
 const getAllCourses = async (req, res, next) => {
     try {
-        const courses = await Course.find().select('-thumbnail');
-        res.status(200).json({ courses });
+        const courses = await Course.find()
+            .select('-thumbnail')
+            .populate({
+                path: 'createdBy',
+                select: 'name'
+            });
+        
+        // Transform the courses to include instructor name
+        const transformedCourses = courses.map(course => {
+            const courseObj = course.toObject();
+            courseObj.instructorName = course.createdBy ? course.createdBy.name : 'Unknown Instructor';
+            return courseObj;
+        });
+        
+        res.status(200).json({ courses: transformedCourses });
     } catch (error) {
         console.error('Error fetching courses:', error);
         return next(new HttpError('Failed to fetch courses', 500));
@@ -89,7 +102,8 @@ const getCourseThumbnail = async (req, res, next) => {
         }
         
         if (!course.thumbnail) {
-            return next(new HttpError('Thumbnail not found for this course', 404));
+            // Instead of returning an error, redirect to a default image
+            return res.redirect('https://via.placeholder.com/300x180?text=No+Image+Available');
         }
         
         res.set('Content-Type', 'image/jpeg'); // Assuming JPEG; adjust if needed
