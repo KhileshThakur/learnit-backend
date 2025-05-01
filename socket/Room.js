@@ -190,10 +190,12 @@ class Room {
   }
 
   getProducerListForPeer() {
+    console.log('=== Getting Producer List ===');
     const producerList = [];
     
     // Add audio producers
     for (const [peerId, producer] of this.audioProducers.entries()) {
+      console.log(`Audio Producer: ${producer.id} from peer ${peerId}`);
       producerList.push({
         producerId: producer.id,
         peerId: peerId,
@@ -203,6 +205,7 @@ class Room {
     
     // Add video producers
     for (const [peerId, producer] of this.videoProducers.entries()) {
+      console.log(`Video Producer: ${producer.id} from peer ${peerId}`);
       producerList.push({
         producerId: producer.id,
         peerId: peerId,
@@ -212,62 +215,80 @@ class Room {
     
     // Add screen producers
     for (const [peerId, producer] of this.screenProducers.entries()) {
+      console.log(`Screen Producer: ${producer.id} from peer ${peerId}`);
       producerList.push({
         producerId: producer.id,
         peerId: peerId,
         kind: 'screen'
       });
     }
+
+    console.log(`Total Producers: ${producerList.length}`);
+    console.log('=========================');
     
     return producerList;
   }
 
   async createProducer(peerId, transportId, rtpParameters, kind, mediaType = 'video') {
-    const transport = this.getTransport(peerId, 'producer');
-    
-    if (!transport) {
-      throw new Error(`Transport for peer ${peerId} not found`);
-    }
-
-    const producer = await transport.produce({
-      kind,
-      rtpParameters,
-      appData: { peerId, kind: mediaType }
-    });
-
-    this.producers.set(producer.id, producer);
-    
-    // Store in type-specific map
-    if (mediaType === 'audio') {
-      this.audioProducers.set(peerId, producer);
-    } else if (mediaType === 'video') {
-      this.videoProducers.set(peerId, producer);
-    } else if (mediaType === 'screen') {
-      this.screenProducers.set(peerId, producer);
-    }
-
-    producer.on('transportclose', () => {
-      console.log(`Producer ${producer.id} transport closed`);
-      this.producers.delete(producer.id);
+    try {
+      console.log(`Creating ${mediaType} producer for peer ${peerId}`);
+      const transport = this.getTransport(peerId, 'producer');
       
-      if (mediaType === 'audio') {
-        this.audioProducers.delete(peerId);
-      } else if (mediaType === 'video') {
-        this.videoProducers.delete(peerId);
-      } else if (mediaType === 'screen') {
-        this.screenProducers.delete(peerId);
+      if (!transport) {
+        throw new Error(`Transport for peer ${peerId} not found`);
       }
-    });
 
-    return producer.id;
+      const producer = await transport.produce({
+        kind,
+        rtpParameters,
+        appData: { peerId, kind: mediaType }
+      });
+
+      // Store in main producers map
+      this.producers.set(producer.id, producer);
+      
+      // Store in type-specific map
+      if (mediaType === 'audio') {
+        this.audioProducers.set(peerId, producer);
+        console.log(`Audio producer ${producer.id} created for peer ${peerId}`);
+      } else if (mediaType === 'video') {
+        this.videoProducers.set(peerId, producer);
+        console.log(`Video producer ${producer.id} created for peer ${peerId}`);
+      } else if (mediaType === 'screen') {
+        this.screenProducers.set(peerId, producer);
+        console.log(`Screen producer ${producer.id} created for peer ${peerId}`);
+      }
+
+      // Add to peer's producers
+      const peer = this.peers.get(peerId);
+      if (peer) {
+        peer.producers.set(mediaType, producer);
+      }
+
+      producer.on('transportclose', () => {
+        console.log(`Producer ${producer.id} transport closed`);
+        this.producers.delete(producer.id);
+        
+        if (mediaType === 'audio') {
+          this.audioProducers.delete(peerId);
+        } else if (mediaType === 'video') {
+          this.videoProducers.delete(peerId);
+        } else if (mediaType === 'screen') {
+          this.screenProducers.delete(peerId);
+        }
+      });
+
+      return producer.id;
+    } catch (error) {
+      console.error('Error creating producer:', error);
+      throw error;
+    }
   }
 
   async createConsumer(consumerPeerId, producerId) {
     try {
-      if (!consumerPeerId) {
-        throw new Error('Consumer peer ID is required');
-      }
-
+      console.log(`Creating consumer for peer ${consumerPeerId} from producer ${producerId}`);
+      
       const producer = this.producers.get(producerId);
       if (!producer) {
         throw new Error(`Producer ${producerId} not found`);
@@ -295,15 +316,14 @@ class Room {
         throw new Error(`Peer ${consumerPeerId} cannot consume producer ${producerId}`);
       }
 
-      console.log(`Creating consumer for peer ${consumerPeerId} from producer ${producerId}`);
-
       const consumer = await transport.consume({
         producerId: producer.id,
         rtpCapabilities: peer.rtpCapabilities,
         paused: true,
         appData: {
           peerId: consumerPeerId,
-          producerPeerId: producer.appData.peerId
+          producerPeerId: producer.appData.peerId,
+          mediaType: producer.appData.kind
         }
       });
 
@@ -311,7 +331,7 @@ class Room {
       this.consumers.set(consumer.id, consumer);
       peer.consumers.set(consumer.id, consumer);
 
-      console.log(`Consumer created successfully: ${consumer.id}`);
+      console.log(`Consumer ${consumer.id} created for peer ${consumerPeerId}`);
 
       // Handle consumer events
       consumer.on('transportclose', () => {

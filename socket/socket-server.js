@@ -177,12 +177,22 @@ const setupSocketServer = async (server) => {
     // Produce (send media)
     socket.on('produce', async ({ roomId, transportId, kind, rtpParameters, mediaType }, callback) => {
       try {
+        console.log(`=== PRODUCE REQUEST ===`);
+        console.log(`Room: ${roomId}`);
+        console.log(`Peer: ${socket.peerId}`);
+        console.log(`Media Type: ${mediaType}`);
+        
         const room = rooms.get(roomId);
         if (!room) {
           throw new Error(`Room ${roomId} not found`);
         }
         
         const producerId = await room.createProducer(socket.peerId, transportId, rtpParameters, kind, mediaType);
+        console.log(`Producer ${producerId} created successfully`);
+        
+        // Get all peers in the room
+        const peers = room.getPeers();
+        console.log(`Notifying ${peers.length} peers about new producer`);
         
         // Notify all peers (except sender) of the new producer
         socket.to(roomId).emit('newProducer', {
@@ -258,11 +268,10 @@ const setupSocketServer = async (server) => {
     // Join a meeting room
     socket.on('joinRoom', async ({ roomId, userName, userRole }, callback) => {
       try {
-        if (!socket.peerId) {
-          throw new Error('Peer ID is required');
-        }
-
-        console.log(`User ${socket.userName} (${socket.peerId}) joining room ${roomId}`);
+        console.log(`=== JOIN ROOM REQUEST ===`);
+        console.log(`Room: ${roomId}`);
+        console.log(`User: ${userName} (${socket.peerId})`);
+        console.log(`Role: ${userRole}`);
         
         const room = await getOrCreateRoom(roomId);
         
@@ -279,6 +288,8 @@ const setupSocketServer = async (server) => {
         // Get room info
         const peers = room.getPeers();
         const producers = room.getProducerListForPeer();
+        
+        console.log(`Room has ${peers.length} peers and ${producers.length} producers`);
         
         // Notify others
         socket.to(roomId).emit('userJoined', {
