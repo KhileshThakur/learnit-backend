@@ -31,7 +31,8 @@ const fetchMeetingByStatusForLearner = async (req, res) => {
 
     try {
         // Fetch meetings only for the specified learner and status
-        const meetings = await Meeting.find({ learner_id, status });
+        const meetings = await Meeting.find({ learner_id, status })
+            .populate('instructor_id', 'name email qualification expertise teachexp');
         res.json(meetings);
     } catch (error) {
         console.error('Error fetching meetings:', error);
@@ -55,16 +56,17 @@ const fetchPendingMeetingForInstructor = async (req, res) => {
 }
 
 const updatePendingStatusForInstructor = async (req, res) => {
-    const { id } = req.params; // Extract meeting ID from URL
-    const { action, time } = req.body; // Extract action and new time from request body
+    const { id } = req.params;
+    const { action, time, reason } = req.body;
 
     try {
         const updateData = {};
         if (action === 'schedule') {
             updateData.status = 'scheduled';
-            updateData.time = time; // Update time when scheduling
+            updateData.time = time;
         } else if (action === 'cancel') {
-            updateData.status = 'cancelled';
+            updateData.status = 'rejected';
+            updateData.rejectReason = reason;
         }
 
         const updatedMeeting = await Meeting.findByIdAndUpdate(id, updateData, { new: true });
@@ -75,4 +77,35 @@ const updatePendingStatusForInstructor = async (req, res) => {
     }
 }
 
-module.exports = {meetingRequest, fetchMeetingByStatusForLearner, fetchPendingMeetingForInstructor, updatePendingStatusForInstructor}
+const fetchScheduledMeetingsForInstructor = async (req, res) => {
+    const { instructor_id } = req.params;
+    try {
+        const meetings = await Meeting.find({ instructor_id, status: 'scheduled' })
+            .populate('learner_id', 'name email');
+        res.json(meetings);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+const fetchCancelledMeetingsForInstructor = async (req, res) => {
+    const { instructor_id } = req.params;
+    try {
+        const meetings = await Meeting.find({ instructor_id, status: 'cancelled' })
+            .populate('learner_id', 'name email');
+        res.json(meetings);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+module.exports = {
+    meetingRequest,
+    fetchMeetingByStatusForLearner,
+    fetchPendingMeetingForInstructor,
+    updatePendingStatusForInstructor,
+    fetchScheduledMeetingsForInstructor,
+    fetchCancelledMeetingsForInstructor
+};

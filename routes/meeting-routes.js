@@ -13,4 +13,8 @@ router.get('/pending/:instructor_id', MeetingController.fetchPendingMeetingForIn
 
 router.put('/:id', MeetingController.updatePendingStatusForInstructor);
 
+router.get('/scheduled/:instructor_id', MeetingController.fetchScheduledMeetingsForInstructor);
+
+router.get('/cancelled/:instructor_id', MeetingController.fetchCancelledMeetingsForInstructor);
+
 module.exports = router;
