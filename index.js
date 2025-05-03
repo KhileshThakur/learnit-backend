@@ -9,6 +9,7 @@ const genericRoutes = require('./routes/generic-routes');
 const learnAiRoutes = require('./routes/learnAiRoutes/learnai-routes');
 const courseRoutes = require('./routes/courses-routes');
 const classRoutes = require('./routes/class-routes');
+const turnRoutes = require('./routes/turn-routes');
 const HttpError = require('./models/http-error');
 const setupSocketServer = require('./socket/socket-server');
 const fs = require('fs');
@@ -34,7 +35,9 @@ app.use('/api/meeting', meetingRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/learnai', learnAiRoutes);
 app.use('/api/classes', classRoutes);
+app.use('/api/turn', turnRoutes);
 app.use('/api', genericRoutes);
+
 
 app.use((req, res, next)=>{
     const error = new HttpError('Could not find this Route', 404);
