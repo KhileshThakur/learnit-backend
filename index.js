@@ -12,14 +12,22 @@ const classRoutes = require('./routes/class-routes');
 const HttpError = require('./models/http-error');
 const setupSocketServer = require('./socket/socket-server');
 const fs = require('fs');
+
+
+
 require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 const discussionRoutes = require('./routes/DiscussionForum/discussion-routes');
 app.use('/api/discussion', discussionRoutes);
+
+app.use('/uploads', express.static('uploads'));
 
 
 // Connect to MongoDB

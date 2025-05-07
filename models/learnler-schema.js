@@ -2,6 +2,10 @@
 const mongoose = require('mongoose');
 
 const learnerSchema = new mongoose.Schema({
+  profilePic: {
+    type: String,
+    default: '' // store image path like '/uploads/LeaProfilePics/filename.jpg'
+  },  
   name: { type: String, required: true },
   gender: { type: String, required: true },
   dob: { type: Date, required: true },
@@ -15,6 +19,11 @@ const learnerSchema = new mongoose.Schema({
   linkedin: { type: String },
   portfolio: { type: String },
   password: {type: String, required: true},
+  bio: {
+    type: String,
+    default: "No bio added yet"
+  },
+  
 }, { timestamps: true });
 
 const Learner = mongoose.model('Learner', learnerSchema);

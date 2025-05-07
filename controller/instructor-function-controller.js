@@ -35,6 +35,7 @@ const getInstructorById = async (req, res) => {
     }
 };
 
+
 const updateInstructor = async (req, res) => {
     try {
         const instructor = await Instructor.findByIdAndUpdate(

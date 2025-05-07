@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const instructorSchema = new mongoose.Schema({
+    profilePic: {
+        type: String,
+        default: '' // store image path like '/uploads/InsProfilePics/filename.jpg'
+      },  
     name: {
         type: String,
         required: true,
@@ -104,7 +108,11 @@ const instructorSchema = new mongoose.Schema({
     password:{
         type: String,
         required: true,
-    }
+    },
+    bio: {
+        type: String,
+        default: "No bio added yet"
+      },
     
 });
 
