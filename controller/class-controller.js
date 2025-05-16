@@ -280,6 +280,42 @@ const canJoinClass = async (req, res, next) => {
     }
 };
 
+// End a class
+const endClass = async (req, res, next) => {
+    try {
+        const classId = req.params.id;
+        const classDoc = await Class.findById(classId);
+        
+        if (!classDoc) {
+            return next(new HttpError('Class not found', 404));
+        }
+        
+        // Verify the instructor owns the related course
+        const course = await Course.findById(classDoc.courseId);
+        if (!course) {
+            return next(new HttpError('Associated course not found', 404));
+        }
+        
+        if (course.createdBy.toString() !== req.body.instructorId) {
+            return next(new HttpError('You are not authorized to end this class', 403));
+        }
+        
+        // Update class to mark it as not live
+        classDoc.isLive = false;
+        classDoc.endedAt = new Date();
+        
+        await classDoc.save();
+        
+        res.status(200).json({ 
+            message: 'Class ended successfully', 
+            class: classDoc 
+        });
+    } catch (error) {
+        console.error('Error ending class:', error);
+        return next(new HttpError('Failed to end class', 500));
+    }
+};
+
 module.exports = {
     createClass,
     getClassesByCourse,
@@ -288,5 +324,6 @@ module.exports = {
     deleteClass,
     getInstructorClasses,
     startClass,
-    canJoinClass
+    canJoinClass,
+    endClass
 }; 
