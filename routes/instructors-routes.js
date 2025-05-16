@@ -20,12 +20,15 @@ router.delete('/:id', instructorFunctionController.deleteInstructor);
 
 //Time capsule routes 
 const capsuleInsController = require("../controller/timeCapsuleController/timeCapsuleInsController");
-
+const { saveMeeting , getMeetingsByCapsuleId, getCapsuleParticipants} = require("../controller/timeCapsuleController/capsuleMeetingController");
 
 router.post("/capsule/create", capsuleInsController.createCapsule);
 router.get("/capsules/:instructorId", capsuleInsController.getInstructorCapsules);
 router.get("/capsule/requests/:capsuleId", capsuleInsController.viewJoinRequests);
 router.post("/capsule/handle-request/:capsuleId/:learnerId", capsuleInsController.handleRequest);
+router.post("/capsule/meeting/save", saveMeeting);
+router.get('/capsule/meeting/:capsuleId', getMeetingsByCapsuleId);
+router.get("/capsule/:capsuleId/participants", getCapsuleParticipants);
 
 
 module.exports = router; 
