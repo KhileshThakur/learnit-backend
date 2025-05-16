@@ -28,6 +28,9 @@ router.get('/instructor/:instructorId/classes', classController.getInstructorCla
 // Start a class
 router.patch('/classes/:id/start', classController.startClass);
 
+// End a class
+router.patch('/classes/:id/end', classController.endClass);
+
 // Check if learner can join a class
 router.get('/classes/:id/can-join', classController.canJoinClass);
 

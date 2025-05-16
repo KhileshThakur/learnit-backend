@@ -6,7 +6,8 @@ const meetingRequestSchema = new mongoose.Schema({
     subject: { type: String, required: true },
     topic: { type: String, required: true },
     time: { type: Date, required: true },
-    status: { type: String, enum: ['scheduled', 'pending', 'cancelled'], default: 'pending' }
+    status: { type: String, enum: ['scheduled', 'pending', 'cancelled'], default: 'pending' },
+    rejectReason: { type: String } // Optional field for storing rejection reason
 });
 
 const Meeting = mongoose.model('Meeting', meetingRequestSchema);
