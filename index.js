@@ -9,26 +9,24 @@ const genericRoutes = require('./routes/generic-routes');
 const learnAiRoutes = require('./routes/learnAiRoutes/learnai-routes');
 const courseRoutes = require('./routes/courses-routes');
 const classRoutes = require('./routes/class-routes');
+
+const discussionRoutes = require('./routes/DiscussionForum/discussion-routes');
+const capsuleChatRoutes = require('./routes/CapsuleChatRotes/capsuleChatsRoutes');
+
 const turnRoutes = require('./routes/turn-routes');
+
 const HttpError = require('./models/http-error');
 const setupSocketServer = require('./socket/socket-server');
+const setupCapsuleChatSocket = require('./socket/socket-chat-capsule');
+const capsuleResourceRoutes = require('./routes/capsule-resource-routes');
 const fs = require('fs');
 
 
 
 require('dotenv').config();
-
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-const path = require('path');
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-const discussionRoutes = require('./routes/DiscussionForum/discussion-routes');
-app.use('/api/discussion', discussionRoutes);
-
-app.use('/uploads', express.static('uploads'));
 
 
 // Connect to MongoDB
@@ -36,14 +34,19 @@ mongoose.connect(process.env.URI)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-
 app.use('/api/instructor', instructorRoutes);
 app.use('/api/learner', learnerRoutes);
 app.use('/api/meeting', meetingRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/learnai', learnAiRoutes);
 app.use('/api/classes', classRoutes);
+
+app.use('/api/discussion', discussionRoutes);
+app.use('/api/capsule-chat', capsuleChatRoutes);
+app.use('/api/capsule-resources', capsuleResourceRoutes);
+
 app.use('/api/turn', turnRoutes);
+
 app.use('/api', genericRoutes);
 
 
@@ -72,6 +75,8 @@ const server = http.createServer(app);
 
 // Setup Socket.IO server
 setupSocketServer(server);
+setupCapsuleChatSocket(server);
+
 
 // Use server.listen instead of app.listen
 server.listen(PORT, () => {
