@@ -35,6 +35,7 @@ const getInstructorById = async (req, res) => {
     }
 };
 
+
 const updateInstructor = async (req, res) => {
     try {
         const instructor = await Instructor.findByIdAndUpdate(
@@ -47,7 +48,7 @@ const updateInstructor = async (req, res) => {
             return res.status(404).json({ message: 'Instructor not found' });
         }
 
-        res.json({ message: 'Instructor updated successfully', instructor });
+        res.json(instructor);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
