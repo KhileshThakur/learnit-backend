@@ -7,16 +7,9 @@ const learnerRoutes = require('./routes/learners-routes');
 const meetingRoutes = require('./routes/meeting-routes');
 const genericRoutes = require('./routes/generic-routes');
 const learnAiRoutes = require('./routes/learnAiRoutes/learnai-routes');
-const courseRoutes = require('./routes/courses-routes');
-const classRoutes = require('./routes/class-routes');
-
 const discussionRoutes = require('./routes/DiscussionForum/discussion-routes');
 const capsuleChatRoutes = require('./routes/CapsuleChatRotes/capsuleChatsRoutes');
-
-const turnRoutes = require('./routes/turn-routes');
-
 const HttpError = require('./models/http-error');
-const setupSocketServer = require('./socket/socket-server');
 const setupCapsuleChatSocket = require('./socket/socket-chat-capsule');
 const capsuleResourceRoutes = require('./routes/capsule-resource-routes');
 const fs = require('fs');
@@ -34,15 +27,10 @@ mongoose.connect(process.env.URI)
 app.use('/api/instructor', instructorRoutes);
 app.use('/api/learner', learnerRoutes);
 app.use('/api/meeting', meetingRoutes);
-app.use('/api/courses', courseRoutes);
 app.use('/api/learnai', learnAiRoutes);
-app.use('/api/classes', classRoutes);
-
 app.use('/api/discussion', discussionRoutes);
 app.use('/api/capsule-chat', capsuleChatRoutes);
 app.use('/api/capsule-resources', capsuleResourceRoutes);
-
-app.use('/api/turn', turnRoutes);
 
 app.use('/api', genericRoutes);
 
@@ -71,12 +59,12 @@ const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
 // Setup Socket.IO server
-setupSocketServer(server);
+// setupSocketServer(server);
 setupCapsuleChatSocket(server);
 
 
 // Use server.listen instead of app.listen
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    console.log(`Socket.IO server is available at ws://localhost:${PORT}`);
+    console.log(`Socket.io server is available at ws://localhost:${PORT}`);
 });
