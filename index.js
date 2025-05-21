@@ -12,6 +12,7 @@ const capsuleChatRoutes = require('./routes/CapsuleChatRotes/capsuleChatsRoutes'
 const HttpError = require('./models/http-error');
 const setupCapsuleChatSocket = require('./socket/socket-chat-capsule');
 const capsuleResourceRoutes = require('./routes/capsule-resource-routes');
+const courseRoutes = require('./routes/courseRoutes');
 const fs = require('fs');
 
 
@@ -34,7 +35,7 @@ app.use('/api/learnai', learnAiRoutes);
 app.use('/api/discussion', discussionRoutes);
 app.use('/api/capsule-chat', capsuleChatRoutes);
 app.use('/api/capsule-resources', capsuleResourceRoutes);
-
+app.use('/api/course', courseRoutes);
 app.use('/api', genericRoutes);
 
 
