@@ -1,5 +1,6 @@
 const Meeting = require('../models/meeting-schema');
 const Learner = require('../models/learnler-schema')
+const axios = require('axios');
 
 const meetingRequest = async (req, res) => {
     const { learner_id, instructor_id, subject, topic, time } = req.body; // Extract learner_id from request body
@@ -62,8 +63,17 @@ const updatePendingStatusForInstructor = async (req, res) => {
     try {
         const updateData = {};
         if (action === 'schedule') {
+            // Call external API to create video room
+            const response = await axios.post('https://meet-up-server-xklt.onrender.com/create-meet');
+            if (!response.data.success) {
+                return res.status(500).json({ message: 'Failed to create video room' });
+            }
+            const { roomName, roomId, joinUrl } = response.data;
             updateData.status = 'scheduled';
             updateData.time = time;
+            updateData.roomName = roomName;
+            updateData.roomId = roomId;
+            updateData.joinUrl = joinUrl;
         } else if (action === 'cancel') {
             updateData.status = 'rejected';
             updateData.rejectReason = reason;
@@ -92,7 +102,7 @@ const fetchScheduledMeetingsForInstructor = async (req, res) => {
 const fetchCancelledMeetingsForInstructor = async (req, res) => {
     const { instructor_id } = req.params;
     try {
-        const meetings = await Meeting.find({ instructor_id, status: 'cancelled' })
+        const meetings = await Meeting.find({ instructor_id, status: 'rejected' })
             .populate('learner_id', 'name email');
         res.json(meetings);
     } catch (error) {

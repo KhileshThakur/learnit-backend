@@ -7,7 +7,10 @@ const meetingRequestSchema = new mongoose.Schema({
     topic: { type: String, required: true },
     time: { type: Date, required: true },
     status: { type: String, enum: ['scheduled', 'pending', 'cancelled'], default: 'pending' },
-    rejectReason: { type: String } // Optional field for storing rejection reason
+    rejectReason: { type: String }, // Optional field for storing rejection reason
+    roomName: { type: String },
+    roomId: { type: String },
+    joinUrl: { type: String },
 });
 
 const Meeting = mongoose.model('Meeting', meetingRequestSchema);
