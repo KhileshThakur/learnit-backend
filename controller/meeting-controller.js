@@ -3,7 +3,7 @@ const Learner = require('../models/learnler-schema')
 const axios = require('axios');
 
 const meetingRequest = async (req, res) => {
-    const { learner_id, instructor_id, subject, topic, time } = req.body; // Extract learner_id from request body
+    const { learner_id, instructor_id, subject, topic, time, objective } = req.body; // Extract learner_id from request body
     try {
         const meetingRequest = new Meeting({
             learner_id,
@@ -11,6 +11,7 @@ const meetingRequest = async (req, res) => {
             subject,
             topic,
             time,
+            objective,
             status: 'pending'
         });
         await meetingRequest.save();
